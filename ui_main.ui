@@ -247,9 +247,6 @@ background-color:rgb(255, 255, 255)
        <property name="text">
         <string/>
        </property>
-       <property name="pixmap">
-        <pixmap resource="resources/inpainter_resources.qrc">:/images/image_inapainting_example.png</pixmap>
-       </property>
        <property name="scaledContents">
         <bool>true</bool>
        </property>

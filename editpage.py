@@ -1,13 +1,12 @@
-from PyQt5.QtWidgets import QSizePolicy, QComboBox, QVBoxLayout, QMainWindow, QSlider, QLabel, QGridLayout, QGraphicsScene, QFileDialog, QFrame, QApplication, QPushButton, QTextEdit, QMessageBox, QGraphicsView, QGraphicsPixmapItem, QLineEdit
+from PyQt5.QtWidgets import QComboBox, QVBoxLayout, QMainWindow, QSlider, QLabel, QGraphicsScene, QFileDialog, QFrame, QApplication, QPushButton,QLineEdit
 from PyQt5 import uic
-from PyQt5.QtCore import QRectF, QSize
-from PyQt5.QtGui import QPixmap, QImage, QPainterPath, QPainter, QBrush, QPen
-from PyQt5.QtCore import Qt, QPoint
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import Qt
 import sys
 import resources.resources
 from editor import Editor
 import os
-from diffusers.utils import load_image
+import json
 
 
 def resource_path(relative_path):
@@ -77,7 +76,7 @@ class Editpage(QMainWindow):
 
 		self.inpaintButton.clicked.connect(self.inpaintImage)
 		self.saveButton.clicked.connect(self.saveImage)
-		self.saveMaskButton.clicked.connect(self.saveMask)
+		self.saveMaskButton.clicked.connect(self.saveOptions)
 		self.resetButton.clicked.connect(self.resetImage)		
 		
 
@@ -205,17 +204,42 @@ class Editpage(QMainWindow):
 	def saveImage(self):
 		self.imageView.save()
 
-	def saveMask(self):
+
+	def saveOptions(self):
 		try:
-			init_image_path = self.image_path.split("/")[-1].replace(".jpg", ".png")
-			mask_path, _ = QFileDialog.getSaveFileName(None, "Save mask file...", f"./masks/{init_image_path}", "PNG files (*.png)")
-			if not mask_path.endswith(".png"):
-				mask_path += ".png"
-			mask = self.imageView._mask
-			mask.save(mask_path)
+			self.saveMask()
+			if self.textPrompt.text() == "":
+				return
+			self.savePrompt()
+			return True
 		except Exception as e:
-			print("error")
-			print(e)
+			print("error \n", e)
+			return
+
+	def savePrompt(self):
+		try:
+			image_prompt = self.textPrompt.text()
+			init_image_name = self.init_image_name
+
+			savePath = self.maskPath.split(".png")[0] + ".json"
+			with open(savePath, "w") as f:
+				json.dump({"image_name": init_image_name, "image_path": self.image_path, "mask_path": self.maskPath, "prompt": image_prompt}, f, indent=4)
+			return savePath
+		except Exception as e:
+			print("error \n", e)
+			return None
+
+
+
+	def saveMask(self):
+		self.init_image_name = self.image_path.split("/")[-1].replace(".jpg", ".png")
+		try:
+			mask_path, _ = QFileDialog.getSaveFileName(None, "Save mask file...", f"./masks/mask_{self.init_image_name}", "PNG files (*.png)")
+			mask_path += ".png" if not mask_path.endswith(".png") else ""
+			self.imageView._mask.save(mask_path)
+			self.maskPath = mask_path
+		except Exception as e:
+			print("error \n", e)
 			return
 
 	def resetImage(self):
