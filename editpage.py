@@ -1,12 +1,13 @@
-from PyQt5.QtWidgets import QSizePolicy, QComboBox, QVBoxLayout, QMainWindow, QSlider, QLabel, QGridLayout, QGraphicsScene, QFileDialog, QFrame, QApplication, QPushButton, QTextEdit, QMessageBox, QGraphicsView
+from PyQt5.QtWidgets import QSizePolicy, QComboBox, QVBoxLayout, QMainWindow, QSlider, QLabel, QGridLayout, QGraphicsScene, QFileDialog, QFrame, QApplication, QPushButton, QTextEdit, QMessageBox, QGraphicsView, QGraphicsPixmapItem, QLineEdit
 from PyQt5 import uic
 from PyQt5.QtCore import QRectF, QSize
 from PyQt5.QtGui import QPixmap, QImage, QPainterPath, QPainter, QBrush, QPen
 from PyQt5.QtCore import Qt, QPoint
 import sys
-import resources
+import resources.resources
 from editor import Editor
 import os
+from diffusers.utils import load_image
 
 
 def resource_path(relative_path):
@@ -35,6 +36,7 @@ class Editpage(QMainWindow):
 		self.backButton = self.findChild(QPushButton, "back_button")
 		self.inpaintButton = self.findChild(QPushButton, "inpaint_button")
 		self.saveButton = self.findChild(QPushButton, "save_button")
+		self.saveMaskButton = self.findChild(QPushButton, "save_mask_button")
 		self.resetButton = self.findChild(QPushButton, "reset_button")
 		self.minButton = self.findChild(QPushButton, "min_button")
 		self.maxButton = self.findChild(QPushButton, "max_button")
@@ -44,6 +46,7 @@ class Editpage(QMainWindow):
 		self.markerWidthSlider = self.findChild(QSlider, "marker_width_slider")
 		self.titleBar = self.findChild(QFrame, "title_bar")
 		self.infoLabel = self.findChild(QLabel, "info_label")
+		self.textPrompt = self.findChild(QLineEdit, "info_input")
 		self.mainFrame = self.findChild(QFrame, "main_frame")
 		self.viewFrame = self.findChild(QFrame, "view_frame")
 		self.chooseMethod = self.findChild(QComboBox, "choose_method")
@@ -74,7 +77,10 @@ class Editpage(QMainWindow):
 
 		self.inpaintButton.clicked.connect(self.inpaintImage)
 		self.saveButton.clicked.connect(self.saveImage)
-		self.resetButton.clicked.connect(self.resetImage)
+		self.saveMaskButton.clicked.connect(self.saveMask)
+		self.resetButton.clicked.connect(self.resetImage)		
+		
+
 
 		flags = Qt.WindowFlags(Qt.FramelessWindowHint)
 		self.setWindowFlags(flags)
@@ -199,7 +205,21 @@ class Editpage(QMainWindow):
 	def saveImage(self):
 		self.imageView.save()
 
+	def saveMask(self):
+		try:
+			init_image_path = self.image_path.split("/")[-1].replace(".jpg", ".png")
+			mask_path, _ = QFileDialog.getSaveFileName(None, "Save mask file...", f"./masks/{init_image_path}", "PNG files (*.png)")
+			if not mask_path.endswith(".png"):
+				mask_path += ".png"
+			mask = self.imageView._mask
+			mask.save(mask_path)
+		except Exception as e:
+			print("error")
+			print(e)
+			return
+
 	def resetImage(self):
+		print(self.textPrompt.text())
 		self.imageView.reset()
 
 

@@ -140,12 +140,12 @@ font-family : &quot;Source Serif Pro SemiBold&quot;;
        </property>
        <property name="styleSheet">
         <string notr="true">background-color: none;
-color: rgb(222, 246, 255);
+color: rgb(255, 255, 255);
 
 font: 63 24pt &quot;Fira Code SemiBold&quot;;</string>
        </property>
        <property name="text">
-        <string>Inpainter</string>
+        <string>Kandy Inpainter</string>
        </property>
       </widget>
       <widget class="QLabel" name="subtitle_label">
@@ -175,13 +175,11 @@ font: 63 24pt &quot;Fira Code SemiBold&quot;;</string>
        <property name="styleSheet">
         <string notr="true">background-color: none;
 font: 57 11pt &quot;Fira Code Medium&quot;;
-color: rgb(205, 246, 255);
+color: rgb(255, 255, 255);
 </string>
        </property>
        <property name="text">
-        <string>&gt; edit images with a retouching brush
-&gt; reconstrunct missing or damaged areas
-&gt; remove objects instantly</string>
+        <string>&gt; retouching brush</string>
        </property>
       </widget>
       <widget class="QPushButton" name="add_image_button">
@@ -205,10 +203,10 @@ border-image: url(:/icons/add_image_colored.png) 1 1 1 1;
 border-radius: 10px;
 }
 QPushButton:hover{
-background-color:rgb(60, 60, 182);
+background-color:rgb(255, 255, 255);
 }
 QPushButton:pressed{
-background-color:rgb(85, 85, 255)
+background-color:rgb(255, 255, 255)
 }
 </string>
        </property>
@@ -328,12 +326,12 @@ background-color:rgb(85, 85, 255)
          <string notr="true">QPushButton{
 border:none;
 border-radius:8px;
-background-color: rgb(71, 213, 213);
-color:rgb(71, 213, 213)
+background-color: rgb(255, 255, 255);
+color:rgb(255, 255, 255)
 }
 QPushButton:hover{
 background-color: rgba(85, 255, 255, 150);
-color:rgb(37, 112, 112);
+color:rgb(255, 255, 255);
 }
 QPushButton:pressed{
 background-color: rgba(85, 255, 255, 50);
