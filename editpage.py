@@ -5,7 +5,7 @@ from PyQt5.QtCore import Qt
 import sys
 import resources.resources
 from editor import Editor
-from compare_slider import CompareSlider
+from compare_slider import CompareSlider, CompareView
 import os
 import json
 
@@ -227,7 +227,7 @@ class Editpage(QMainWindow):
 
 
 	def showComparisonSlider(self, original: QPixmap, generated: QPixmap):
-		self.compareSlider = CompareSlider(original, generated, self.viewFrame)
+		self.compareSlider = CompareView(original, generated, self.viewFrame)
 
 		layout = self.viewFrame.layout()
 
