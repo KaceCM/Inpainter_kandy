@@ -30,12 +30,13 @@ class Editor(QtWidgets.QGraphicsView):
 
         self.drawMode = True
         self.drawing = False
+        self.hasBeenSet = False
         self.brushColor = "red"
         self.brushSlider = slider
         self.lastPoint = QPoint()
         self.color_index = {"red":0, "green":1, "blue":2}
 
-        self._method = "Telea"
+        self._method = "dreamshape8"
         self._mask = None
         self._current_image = None
         self._unmarkedImage = None
@@ -111,6 +112,7 @@ class Editor(QtWidgets.QGraphicsView):
     def mouseMoveEvent(self, event):
 
         if(event.buttons() and Qt.LeftButton) and self.drawing:
+            self.hasBeenSet = True
             if self.set_mask:
                 self.setMask()
                 self.set_mask = False
@@ -152,8 +154,12 @@ class Editor(QtWidgets.QGraphicsView):
         super(Editor, self).mouseReleaseEvent(event)    
 
 
-    def inpaint(self):
+    def inpaint(self, textPrompt, ratio, merge):
 
+        ratio = int(ratio) if ratio != "" else 1
+
+        if self._mask is None:
+            raise Exception("No mask has been created!")
         img = np.array(self._current_image)              
         mask = rgb_view(self._mask)
 
@@ -164,11 +170,10 @@ class Editor(QtWidgets.QGraphicsView):
             output_rgb = backend.inpaint_cv2(img, mask,method="telea") 
 
         elif self._method == "Deepfill":                        
-            output_rgb = backend.inpaint_deepfill(img, mask)        
-        
-        #############################################
-        # add calls to your inpainting methods here #
-        #############################################
+            output_rgb = backend.inpaint_deepfill(img, mask)     
+
+        elif self._method == "dreamshape8":  
+            output_rgb = backend.dream8(img, mask, prompt=textPrompt, ratio=ratio, merge=merge)
 
         else:
             raise Exception("this inpainting method is not recognized!")

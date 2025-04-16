@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QComboBox, QVBoxLayout, QMainWindow, QSlider, QLabel, QGraphicsScene, QFileDialog, QFrame, QApplication, QPushButton,QLineEdit
+from PyQt5.QtWidgets import QComboBox, QVBoxLayout, QMainWindow, QSlider, QLabel, QGraphicsScene, QFileDialog, QFrame, QApplication, QPushButton,QLineEdit, QProgressDialog
 from PyQt5 import uic
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
@@ -46,6 +46,7 @@ class Editpage(QMainWindow):
 		self.titleBar = self.findChild(QFrame, "title_bar")
 		self.infoLabel = self.findChild(QLabel, "info_label")
 		self.textPrompt = self.findChild(QLineEdit, "info_input")
+		self.inpaintRatio = self.findChild(QLineEdit, "ratio_input")
 		self.mainFrame = self.findChild(QFrame, "main_frame")
 		self.viewFrame = self.findChild(QFrame, "view_frame")
 		self.chooseMethod = self.findChild(QComboBox, "choose_method")
@@ -74,6 +75,8 @@ class Editpage(QMainWindow):
 		self.blueMarker.clicked.connect(self.blueSelect)
 		self.greenMarker.clicked.connect(self.greenSelect)
 
+	
+
 		self.inpaintButton.clicked.connect(self.inpaintImage)
 		self.saveButton.clicked.connect(self.saveImage)
 		self.saveMaskButton.clicked.connect(self.saveOptions)
@@ -97,7 +100,7 @@ class Editpage(QMainWindow):
 		
 		####--add new inpainting methods here--####
 		 
-		self.addInpaintingMethod("Deepfill") 
+		# self.addInpaintingMethod("Deepfill") 
 	
 		####-----------------------------------####
 	
@@ -199,7 +202,22 @@ class Editpage(QMainWindow):
 		
 
 	def inpaintImage(self):
-		self.imageView.inpaint()
+		if self.imageView.hasBeenSet:
+			progress = QProgressDialog("Generating image...", None, 0, 0, self)
+			progress.setWindowTitle("Processing")
+			progress.setWindowModality(Qt.WindowModal)
+			progress.setCancelButton(None)  # No cancel button
+			progress.show()
+			
+			# Process any pending events so that the dialog is updated
+			QApplication.processEvents()
+			self.imageView.inpaint(textPrompt=self.textPrompt.text(), ratio=self.inpaintRatio.text(), merge=True)
+
+			progress.close()
+		else:
+			print(Exception("No mask has been created!"))
+			return
+		
 
 	def saveImage(self):
 		self.imageView.save()

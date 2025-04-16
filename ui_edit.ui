@@ -214,7 +214,7 @@ font: 63 18pt &quot;Fira Code SemiBold&quot;;</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="0" colspan="21">
+       <item row="2" column="0" colspan="15">
         <widget class="QLineEdit" name="info_input">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -224,13 +224,13 @@ font: 63 18pt &quot;Fira Code SemiBold&quot;;</string>
          </property>
          <property name="minimumSize">
           <size>
-           <width>400</width>
+           <width>300</width>
            <height>21</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>801</width>
+           <width>500</width>
            <height>56</height>
           </size>
          </property>
@@ -245,14 +245,54 @@ font: 63 18pt &quot;Fira Code SemiBold&quot;;</string>
          </property>
          <property name="styleSheet">
           <string notr="true">background-color: none;
-color: rgb(0, 0, 0);
-font: 63 12pt &quot;Fira Code SemiBold&quot;;</string>
+          color: rgb(0, 0, 0);
+          font: 63 12pt &quot;Fira Code SemiBold&quot;;</string>
          </property>
           <property name="placeholderText">
             <string>Enter your inpainting note here...</string>
           </property>
         </widget>
        </item>
+       <item row="2" column="18">
+        <widget class="QLineEdit" name="ratio_input">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>21</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>200</width>
+           <height>56</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>Fira Code SemiBold</family>
+           <pointsize>10</pointsize>
+           <weight>7</weight>
+           <italic>false</italic>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: none;
+          color: rgb(0, 0, 0);
+          text-align: center;
+          font: 63 10pt &quot;Fira Code SemiBold&quot;;</string>
+         </property>
+          <property name="placeholderText">
+            <string>Enter a ratio...</string>
+          </property>
+        </widget>
+        </item>
        <item row="0" column="36">
         <widget class="QPushButton" name="back_button">
          <property name="sizePolicy">
@@ -521,7 +561,7 @@ background-color:qlineargradient(spread:repeat, x1:0, y1:0, x2:1, y2:1, stop:0 r
          </property>
         </widget>
        </item>
-       <item row="2" column="28">
+       <item row="2" column="21">
         <widget class="QComboBox" name="choose_method">
          <property name="minimumSize">
           <size>
@@ -534,21 +574,16 @@ background-color:qlineargradient(spread:repeat, x1:0, y1:0, x2:1, y2:1, stop:0 r
          </property>
          <property name="styleSheet">
           <string notr="true">font: 63 11pt &quot;Fira Code SemiBold&quot;;
-color:rgb(255, 255, 255);
-border-radius: 10px;
-background:qradialgradient(spread:repeat, cx:1, cy:0, radius:1.799, fx:0.624, fy:0.403, stop:0 rgba(0, 210, 255, 255), stop:0.642045 rgba(48, 59, 207, 255))</string>
+          color:rgb(255, 255, 255);
+          border-radius: 10px;
+          background:qradialgradient(spread:repeat, cx:1, cy:0, radius:1.799, fx:0.624, fy:0.403, stop:0 rgba(0, 210, 255, 255), stop:0.642045 rgba(48, 59, 207, 255))</string>
          </property>
          <property name="duplicatesEnabled">
           <bool>false</bool>
          </property>
          <item>
           <property name="text">
-           <string>Telea</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Navier-Stokes</string>
+           <string>dreamshape8</string>
           </property>
          </item>
         </widget>
