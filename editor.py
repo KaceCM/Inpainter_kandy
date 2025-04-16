@@ -196,10 +196,10 @@ class Editor(QtWidgets.QGraphicsView):
             pass
 
     def reset(self):
-        self._photo.setPixmap(self._unmarkedImage) 
+        self._photo.setPixmap(self._unmarkedImage)
         self.set_mask = True
         self.setMask()
-        self._current_image = rgb_view(self._unmarkedImage.toImage())      
+        self._current_image = rgb_view(self._unmarkedImage.toImage())    
 
 
 class Window(QtWidgets.QWidget):

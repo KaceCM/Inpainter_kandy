@@ -5,6 +5,7 @@ from PyQt5.QtCore import Qt
 import sys
 import resources.resources
 from editor import Editor
+from compare_slider import CompareSlider
 import os
 import json
 
@@ -202,21 +203,40 @@ class Editpage(QMainWindow):
 		
 
 	def inpaintImage(self):
-		if self.imageView.hasBeenSet:
-			progress = QProgressDialog("Generating image...", None, 0, 0, self)
-			progress.setWindowTitle("Processing")
-			progress.setWindowModality(Qt.WindowModal)
-			progress.setCancelButton(None)  # No cancel button
-			progress.show()
-			
-			# Process any pending events so that the dialog is updated
-			QApplication.processEvents()
-			self.imageView.inpaint(textPrompt=self.textPrompt.text(), ratio=self.inpaintRatio.text(), merge=True)
-
-			progress.close()
-		else:
+		if not self.imageView.hasBeenSet:
 			print(Exception("No mask has been created!"))
 			return
+
+		progress = QProgressDialog("Generating image...", None, 0, 0, self)
+		progress.setWindowTitle("Processing")
+		progress.setWindowModality(Qt.WindowModal)
+		progress.setCancelButton(None)
+		progress.show()
+		QApplication.processEvents()
+
+		original_pixmap = self.imageView._unmarkedImage
+		self.imageView.inpaint(
+			textPrompt=self.textPrompt.text(),
+			ratio=self.inpaintRatio.text(),
+			merge=True
+		)
+		generated_pixmap = self.imageView._photo.pixmap()
+
+		progress.close()
+		self.showComparisonSlider(original_pixmap, generated_pixmap)
+
+
+	def showComparisonSlider(self, original: QPixmap, generated: QPixmap):
+		self.compareSlider = CompareSlider(original, generated, self.viewFrame)
+
+		layout = self.viewFrame.layout()
+
+		for i in reversed(range(layout.count())):
+			item = layout.itemAt(i)
+			if item.widget():
+				item.widget().setParent(None)
+
+		layout.addWidget(self.compareSlider) 
 		
 
 	def saveImage(self):
@@ -263,6 +283,22 @@ class Editpage(QMainWindow):
 	def resetImage(self):
 		print(self.textPrompt.text())
 		self.imageView.reset()
+		
+		# Remove the CompareSlider if it's showing
+		layout = self.viewFrame.layout()
+		if layout:
+			for i in reversed(range(layout.count())):
+				widget = layout.itemAt(i).widget()
+				if isinstance(widget, CompareSlider):
+					widget.setParent(None)
+					break
+
+		# Re-show the imageView for drawing
+		if self.imageView not in [layout.itemAt(i).widget() for i in range(layout.count())]:
+			layout.addWidget(self.imageView)
+
+		self.textPrompt.clear()
+		self.inpaintRatio.clear()
 
 
 	
