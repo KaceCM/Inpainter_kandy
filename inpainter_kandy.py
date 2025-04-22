@@ -63,7 +63,7 @@ class Homepage(QMainWindow):
 
 	def add_image(self):
 		try:
-			image_path, _ = QFileDialog.getOpenFileName(None, "Open image file...")
+			image_path, _ = QFileDialog.getOpenFileName(None, "Open image file...", directory="E:/DEV/Kandy/RoomEnhancer/data")
 			self.editpage = Editpage(self, image_path)
 			self.hide()
 			self.editpage.show()

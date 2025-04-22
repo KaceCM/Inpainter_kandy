@@ -2,7 +2,13 @@ import cv2
 import numpy as np
 from diffusers import AutoPipelineForInpainting, DEISMultistepScheduler
 import torch
-from PIL import Image
+from PIL import Image, ImageFilter
+from dotenv import load_dotenv, find_dotenv
+import os
+
+print(load_dotenv(find_dotenv(".env")))
+CACHE_DIR = os.getenv("CACHE_DIR")
+
 
 def inpaint_cv2(image, mask, method="telea", radius=3):
 
@@ -25,24 +31,21 @@ def dream8(image, mask, prompt="", ratio=1, merge=False):
     height_size -= height_size % 8
     width_size -= width_size % 8
 
-    pipe = AutoPipelineForInpainting.from_pretrained('Lykon/dreamshaper-8-inpainting', torch_dtype=torch.float16, variant="fp16")
+    pipe = AutoPipelineForInpainting.from_pretrained('Lykon/dreamshaper-8-inpainting', torch_dtype=torch.float16, variant="fp16", cache_dir=CACHE_DIR)
     pipe.scheduler = DEISMultistepScheduler.from_config(pipe.scheduler.config)
     pipe = pipe.to("cuda")
 
     real_prompt = "photorealistic, 8k, " + prompt
-    negative_prompt = "unrealistic, text, human, artefact"
+    negative_prompt = "unrealistic, text, human, artefact, furniture, chairs, couch, sofa, table, objects, clutter, shadows"
 
     inpainted = pipe(prompt=real_prompt, image=init_image, mask_image=init_mask, num_inference_steps=25,
                      height=height_size, width=width_size, negative_prompt=negative_prompt).images[0] 
     
     if merge:
-        inpainted = combine_init_generated(init_image, inpainted, init_mask)
+        inpainted = combine_output_blend(init_image, inpainted, init_mask, blur_radius=6)
 
-    inpainted_resized = inpainted.resize((init_image.size[0], init_image.size[1]), Image.LANCZOS)
-    inpainted_ndarray = np.array(inpainted_resized)
-
-
-
+    
+    inpainted_ndarray = np.array(inpainted)
     return inpainted_ndarray
 
 
@@ -82,6 +85,25 @@ def combine_init_generated(init_image, generated_image, mask):
     return combined_image
         
 
+def combine_output_blend(init_image, output_image, mask_image, blur_radius=6):
+    # Resize output to original size
+    resized_output = output_image.resize(init_image.size, Image.LANCZOS)
+    mask_resized = mask_image.resize(init_image.size)
+
+    # Convert all to numpy
+    img_init = np.array(init_image).astype(np.float32)
+    img_output = np.array(resized_output).astype(np.float32)
+    mask_np = np.array(mask_resized.convert("L")).astype(np.float32) / 255.0
+
+    # Flouter le masque pour blending progressif
+    mask_blurred = Image.fromarray((mask_np * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(radius=blur_radius))
+    mask_blurred_np = np.array(mask_blurred).astype(np.float32) / 255.0
+
+    # Alpha blending
+    blended = (1 - mask_blurred_np[..., None]) * img_init + mask_blurred_np[..., None] * img_output
+    blended = blended.clip(0, 255).astype(np.uint8)
+
+    return Image.fromarray(blended)
 
 
 def inpaint_deepfill(image, mask):
