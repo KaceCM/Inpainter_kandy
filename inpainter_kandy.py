@@ -1,8 +1,7 @@
-from PyQt5.QtWidgets import QMainWindow, QLabel, QFileDialog, QFrame, QApplication, QPushButton, QTextEdit, QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QLabel, QFileDialog, QFrame, QApplication, QPushButton, QTextEdit, QMessageBox, QComboBox
 from PyQt5 import uic
 from PyQt5.QtCore import Qt
-from editpage import Editpage
-import resources
+import resources.resources
 import sys
 import os
 
@@ -20,6 +19,9 @@ class Homepage(QMainWindow):
 		super().__init__()
 		uic.loadUi(resource_path("ui_main.ui"), self)
 
+		self.modeComboBox: QComboBox = self.findChild(QComboBox, "modeComboBox")
+		self.modeComboBox.setEnabled(True)
+		self.modeComboBox.raise_()
 		self.minButton = self.findChild(QPushButton, "minimize_button")
 		self.closeButton = self.findChild(QPushButton, "close_button")
 		self.addImageButton = self.findChild(QPushButton, "add_image_button")
@@ -62,13 +64,28 @@ class Homepage(QMainWindow):
 
 
 	def add_image(self):
-		try:
-			image_path, _ = QFileDialog.getOpenFileName(None, "Open image file...", directory="E:/DEV/Kandy/RoomEnhancer/data")
-			self.editpage = Editpage(self, image_path)
-			self.hide()
-			self.editpage.show()
-		except:
-			return
+			try:
+				image_path, _ = QFileDialog.getOpenFileName(None, "Open image file...", directory=".")
+				mode = self.modeComboBox.currentText()
+				if mode == "Inpainting":
+					from editpage import Editpage as Page
+				elif mode == "Enhancement":
+					print("ENHANCEMENT")
+					from enhance import EnhancePage as Page
+				elif mode == "Style Change":
+					print("STYLE")
+					from stylepage import StylePage as Page
+				else:
+					return
+
+				try:
+					self.editpage = Page(self, image_path)
+					self.hide()
+					self.editpage.show()
+				except Exception as e:
+					print("Erreur lors de l'ouverture de la page :", e)
+			except:
+				return
 
 	
 if __name__ == "__main__":

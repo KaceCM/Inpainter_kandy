@@ -113,3 +113,20 @@ def inpaint_deepfill(image, mask):
     # for now just returning the input image
     print("deepfill - not implemented yet")
     return image    
+
+
+def enhance_image(image: np.ndarray, params=None) -> np.ndarray:
+    """
+    Placeholder pour l'algorithme d'enhancement.
+    Vous implémenterez ici la logique.
+    """
+    # TODO: implement enhancement algorithm
+    return image
+
+
+def change_style(image: np.ndarray, style_params=None) -> np.ndarray:
+    """
+    Placeholder pour l'algorithme de changement de style (depth image generation).
+    """
+    # TODO: implement style change algorithm
+    return image

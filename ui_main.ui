@@ -254,6 +254,13 @@ background-color:rgb(255, 255, 255)
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
        </property>
       </widget>
+    
+      <widget class="QComboBox" name="modeComboBox">
+        <item><property name="text"><string>Inpainting</string></property></item>
+        <item><property name="text"><string>Enhancement</string></property></item>
+        <item><property name="text"><string>Style Change</string></property></item>
+      </widget>
+    
       <widget class="QFrame" name="title_bar">
        <property name="geometry">
         <rect>
